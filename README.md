@@ -8,7 +8,8 @@ Make a **Castles EZ100PU** smart-card reader work on an Apple Silicon Mac (M1/M2
 > git clone https://github.com/<you>/ez100pu-apple-silicon.git
 > cd ez100pu-apple-silicon
 > sudo ./scripts/install.sh
-> # then unplug + replug the reader
+> # follow the final on-screen instructions (usually: unplug/replug the reader —
+> # occasionally: reboot, if the smart-card daemon was already running)
 > ./scripts/verify.sh
 > ```
 
@@ -59,7 +60,12 @@ The prebuilt bundle in [`prebuilt/ifd-ez.bundle`](prebuilt/) is arm64, **statica
 sudo ./scripts/install.sh
 ```
 
-Then **unplug the EZ100PU, wait 3 seconds, and plug it back in** (this fires the USB event that makes macOS re-scan). Verify:
+The installer tells you what to do next, because it depends on whether the smart-card daemon (`com.apple.ifdreader`) was already running when you installed:
+
+- **Wasn't running yet** (typical first-time install) — just **unplug the EZ100PU, wait 3 seconds, and plug it back in** (this fires the USB event that makes macOS re-scan).
+- **Was already running** (e.g. you'd already opened a HiPKI/e-gov page, or this is a reinstall) — macOS's System Integrity Protection refuses to force-restart it in place, even as root, so **reboot** instead. A fresh daemon picks up the new driver at boot.
+
+Either way, finish with:
 
 ```sh
 ./scripts/verify.sh
@@ -75,6 +81,8 @@ Expected:
 All checks passed — the EZ100PU is working.
 ```
 
+If step 3 passes but step 4 doesn't, that's the SIP/stale-daemon case above — reboot and re-run `verify.sh`.
+
 ### Using it with Taiwan e-gov services (HiPKI)
 
 The HiPKI local server enumerates readers **once at startup**, so after installing the driver it needs a nudge:
@@ -84,6 +92,12 @@ launchctl kickstart -k gui/$(id -u)/com.node.HIPKILocalServer.cht
 ```
 
 Reload `http://localhost:61161/selfTest.htm` — step 5 should now show your reader and card number, and steps 6–9 (PIN / 簽章驗證 / 憑證資訊) should all pass.
+
+**Before vs. after** on the HiPKI self-test page:
+
+| Before | After |
+|---|---|
+| ![HiPKI self-test before: step 5 選擇讀卡機及卡片 shows X with an empty reader dropdown, steps 6-9 blank](docs/images/hipki-selftest-before.png) | ![HiPKI self-test after: all 9 steps show V, reader and card number populated, signature/decryption cert info shown](docs/images/hipki-selftest-after.png) |
 
 ---
 
@@ -129,6 +143,7 @@ docs/HOWTO.md               Annotated deep-dive / troubleshooting
 | Reader was working, died after a HiCOS update | `ezusb.bundle` got re-dropped and shadows our driver | Re-run `sudo ./scripts/install.sh` |
 | Reader in `system_profiler` but **not** in HiPKI dropdown | HiPKI server has a stale slot list | `launchctl kickstart -k gui/$(id -u)/com.node.HIPKILocalServer.cht` and reload the page |
 | Nothing under `Readers:` after install | USB match event not fired | Physically unplug/replug the reader |
+| Reader shows in `verify.sh` step 3 (`system_profiler`) but step 4 (PCSC/`SCardListReaders`) still fails, even after replugging | `com.apple.ifdreader` was already running before install — it's SIP-protected, so macOS won't let it (or you, or root) force-reload the drivers directory in place | **Reboot**, then re-run `./scripts/verify.sh` — `install.sh` detects this case and tells you upfront |
 | `install.sh` refuses on Intel | Prebuilt is arm64-only | Use `./scripts/build-from-source.sh` |
 
 Deeper diagnostics — watch the daemon evaluate the reader live:
