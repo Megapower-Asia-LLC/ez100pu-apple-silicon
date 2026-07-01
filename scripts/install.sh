@@ -46,6 +46,15 @@ fi
 [[ $EUID -eq 0 ]] || die "Please run with sudo:  sudo $0"
 [[ -d "$SRC_BUNDLE" ]] || die "Prebuilt bundle not found at: $SRC_BUNDLE"
 
+# com.apple.ifdreader is SIP-protected: once it's running, nothing (not even
+# root) can force it to reload the drivers directory in place. If it's already
+# up, only a reboot will pick up the change we're about to make.
+if pgrep -qf 'com\.apple\.ifdreader\.slotd/Contents/MacOS/com\.apple\.ifdreader'; then
+  DAEMON_WAS_RUNNING=1
+else
+  DAEMON_WAS_RUNNING=0
+fi
+
 # --- 1. install the bundle ---
 info "Installing ${BUNDLE_NAME} -> ${DRIVERS_DIR}"
 mkdir -p "$DRIVERS_DIR"
@@ -82,17 +91,37 @@ fi
 
 # --- 4. re-trigger reader enumeration ---
 info "Restarting the smart-card reader daemon"
-killall com.apple.ifdreader 2>/dev/null || true
-sleep 2
-ok "Daemon signalled (launchd will relaunch it on demand)"
+if [[ "$DAEMON_WAS_RUNNING" -eq 1 ]]; then
+  # Best-effort — these normally do nothing while the daemon is already alive
+  # (macOS refuses with "Operation not permitted while SIP is engaged"), but
+  # they're free to try and occasionally do help on some macOS versions.
+  launchctl kickstart -k system/com.apple.ifdreader >/dev/null 2>&1 || true
+  killall com.apple.ifdreader >/dev/null 2>&1 || true
+  sleep 2
+  if pgrep -qf 'com\.apple\.ifdreader\.slotd/Contents/MacOS/com\.apple\.ifdreader'; then
+    warn "The daemon was already running and macOS (SIP) won't let it be force-restarted."
+    NEEDS_REBOOT=1
+  else
+    ok "Daemon restarted"
+  fi
+else
+  ok "Daemon wasn't running yet — it will start fresh with the new driver on first use"
+fi
 
 echo ""
-ok "${G}Driver installed.${N}"
-echo ""
-echo "Final step (physical): ${Y}unplug the EZ100PU, wait 3 seconds, plug it back in.${N}"
-echo "Then verify with:"
-echo "    system_profiler SPSmartCardsDataType"
-echo "You should see your reader listed under \"Readers:\"."
+if [[ "${NEEDS_REBOOT:-0}" -eq 1 ]]; then
+  ok "${G}Driver installed.${N} ${Y}A reboot is required to activate it.${N}"
+  echo ""
+  echo "Final step: ${Y}reboot this Mac${N}, then run:"
+  echo "    ./scripts/verify.sh"
+else
+  ok "${G}Driver installed.${N}"
+  echo ""
+  echo "Final step (physical): ${Y}unplug the EZ100PU, wait 3 seconds, plug it back in.${N}"
+  echo "Then run:"
+  echo "    ./scripts/verify.sh"
+  echo "(If verify.sh still fails at step 4 after that, reboot and re-run it — see README Troubleshooting.)"
+fi
 echo ""
 echo "If you use it with a Taiwan e-gov service (報稅 / 健保 / 自然人憑證):"
 echo "    Restart the HiPKI local server so it re-scans, then reload the test page:"

@@ -26,9 +26,11 @@ else
 fi
 
 echo "==> 3. Reader visible to macOS?"
-if system_profiler SPSmartCardsDataType 2>/dev/null | grep -A3 "Readers:" | grep -q "Reader"; then
-  READER=$(system_profiler SPSmartCardsDataType 2>/dev/null | sed -n '/Readers:/,/Reader Drivers:/p' | grep '#0' | head -1 | sed 's/^ *//')
+READERS_BLOCK=$(system_profiler SPSmartCardsDataType 2>/dev/null | sed -n '/Readers:/,/Reader Drivers:/p')
+if echo "$READERS_BLOCK" | grep -q '#0'; then
+  READER=$(echo "$READERS_BLOCK" | grep '#0' | head -1 | sed 's/^ *//')
   echo "${G} ✓${N} ${READER}"
+  READER_VISIBLE=1
 else
   echo "${R} ✗${N} No reader listed. Unplug/replug the EZ100PU and try again."; exit 1
 fi
@@ -56,5 +58,14 @@ echo ""
 if [[ $rc -eq 0 ]]; then
   echo "${G}All checks passed — the EZ100PU is working.${N}"
 else
-  echo "${R}PCSC enumeration failed.${N} See README troubleshooting."; exit 1
+  echo "${R}PCSC enumeration failed.${N}"
+  if [[ "${READER_VISIBLE:-0}" -eq 1 ]]; then
+    echo "The reader IS visible to macOS (step 3 passed) but PCSC still returns nothing."
+    echo "This usually means the smart-card daemon was already running before the driver"
+    echo "was installed, and macOS (SIP) won't let it be force-restarted in place."
+    echo "Fix: ${Y}reboot${N}, then re-run this script."
+  else
+    echo "See README troubleshooting."
+  fi
+  exit 1
 fi
