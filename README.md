@@ -36,7 +36,7 @@
 
 2. **開源驅動程式要修三個地方才載入得了。** 我們用 [`ezIFD`](https://github.com/drinkcat/ezIFD)（一個加上 EZ100PU 支援的 CCID 分支）。但直接用現在的工具鏈編出來還是載入不了，因為：
    - 它產生的 `Info.plist` 裡有一個**沒跳脫的 `<email>`** → XML 無效 → macOS 會把驅動程式顯示成 `(null):(null)`；
-   - 它的 `CFBundleIdentifier` 跟 Apple 系統的 CCID 驅動程式**撞名** → 系統服務去重之後就忽略我們的；
+   - 它的 `CFBundleIdentifier` 跟 Apple 系統的 CCID 驅動程式**撞名** → 系統服務只會留下其中一個，就忽略掉我們的；
    - 沒簽章／被隔離（quarantine）的 bundle 會被拒絕 → 必須做 **ad-hoc 簽章**。
 
 3. **原廠驅動程式會蓋掉我們的 —— 而且會自己跑回來。** x86_64 的 `ezusb.bundle` 跟我們的驅動程式吃到同一組 USB VID/PID（`0x0CA6/0x0010`）。只要它在，它就會搶到配對、在 arm64 上載入失敗、丟出 `BTMErrorDomain Code=-98`，然後讀卡機就會**整個從 PCSC 消失**。有些 HiCOS 安裝程式／更新會把它重新塞回來（pkg id 為 `com.mygreatcompany.pkg.EZ100driver`）。如果你的讀卡機在更新 HiCOS 之後突然壞掉 —— 就是這個原因，重跑一次 `install.sh` 就好。
