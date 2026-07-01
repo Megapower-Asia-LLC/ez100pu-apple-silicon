@@ -87,6 +87,8 @@ All checks passed — the EZ100PU is working.
 
 ### 搭配台灣政府服務（HiPKI）使用
 
+> **前提：先裝好政府的網頁元件。** 這個 repo 只讓讀卡機能被 macOS 讀到；真正跟政府網站溝通的是**自然人憑證跨平台網頁元件**（即 HiPKI Local Server，會在 `localhost:61161` 開一個本機服務，安裝時一併裝上 HiCOS 卡片驅動程式）。請到內政部憑證管理中心（MOICA）下載安裝：<https://moica.nat.gov.tw/rac_plugin.html>。這個元件與本驅動程式各自獨立，兩個都要裝。
+
 HiPKI 本機服務**只在啟動時掃描一次**讀卡機，所以裝完驅動程式後要推它一把：
 
 ```sh

@@ -87,6 +87,8 @@ If step 3 passes but step 4 doesn't, that's the SIP/stale-daemon case above — 
 
 ### Using it with Taiwan e-gov services (HiPKI)
 
+> **Prerequisite: install the government's web component first.** This repo only makes the reader visible to macOS; the thing the e-gov websites actually talk to is the **自然人憑證跨平台網頁元件** (Citizen Digital Certificate cross-platform web component, a.k.a. HiPKI Local Server) — it runs the `localhost:61161` service and bundles the HiCOS card driver. Download and install it from MOICA (內政部憑證管理中心): <https://moica.nat.gov.tw/rac_plugin.html>. It and this driver are independent — you need both.
+
 The HiPKI local server enumerates readers **once at startup**, so after installing the driver it needs a nudge:
 
 ```sh
