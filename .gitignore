@@ -1,0 +1,12 @@
+# .gitignore
+
+# Build artifacts from build-from-source.sh
+build/
+prebuilt/ifd-ez.bundle.fresh/
+
+# macOS cruft
+.DS_Store
+
+# Never commit HiPKI debug logs — they contain card serials, certs, and PINs
+debug.log*
+*.HIPKILocalServer*.log

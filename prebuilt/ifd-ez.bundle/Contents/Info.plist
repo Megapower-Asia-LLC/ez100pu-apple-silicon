@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>libccid.dylib</string>
+	<key>CFBundleIdentifier</key>
+	<string>fr.apdu.ccid.ezIFD</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>CCIDCLASSDRIVER</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.5.5</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>Copyright</key>
+	<string>This driver is protected by terms of the GNU Lesser General Public License version 2.1, or (at your option) any later version.</string>
+	<key>ifdCapabilities</key>
+	<string>0x00000000</string>
+	<key>ifdDriverOptions</key>
+	<string>0x0000</string>
+	<key>ifdFriendlyName</key>
+	<array>
+		<string>CASTLES EZUSB Smart Card Reader</string>
+	</array>
+	<key>ifdLogLevel</key>
+	<string>0x0003</string>
+	<key>ifdManufacturerString</key>
+	<string>Nicolas Boichat &lt;nicolas@boichat.ch&gt;, Ludovic Rousseau (ludovic.rousseau@free.fr)</string>
+	<key>ifdProductID</key>
+	<array>
+		<string>0x0010</string>
+	</array>
+	<key>ifdProductString</key>
+	<string>ezIFD driver (CCID fork for EZUSB/EZ100PU)</string>
+	<key>ifdProtocolSupport</key>
+	<string>0x00000001</string>
+	<key>ifdVendorID</key>
+	<array>
+		<string>0x0CA6</string>
+	</array>
+	<key>ifdVersionNumber</key>
+	<string>0x00000001</string>
+</dict>
+</plist>
