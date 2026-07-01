@@ -1,6 +1,6 @@
 **繁體中文** | [English](README.en.md)
 
-# EZ100PU 讀卡機 in Apple Silicon macOS
+# EZ100PU 讀卡機在 Apple Silicon macOS 上
 
 讓 **Castles EZ100PU** 晶片讀卡機在 Apple Silicon Mac（M1／M2／M3／M4）上正常運作 —— 包含透過 HiPKI 本機服務讀卡的台灣政府服務（報稅／健保／自然人憑證）。
 
@@ -95,11 +95,11 @@ launchctl kickstart -k gui/$(id -u)/com.node.HIPKILocalServer.cht
 
 重新整理 `http://localhost:61161/selfTest.htm` —— 第 5 項應該就會顯示你的讀卡機和卡號，第 6～9 項（PIN／簽章驗證／憑證資訊）也都會通過。
 
-**Before vs. after** on the HiPKI self-test page:
+HiPKI 自我檢測頁面 **安裝前後對照**：
 
-| Before | After |
+| 安裝前 | 安裝後 |
 |---|---|
-| ![HiPKI self-test before: step 5 選擇讀卡機及卡片 shows X with an empty reader dropdown, steps 6-9 blank](docs/images/hipki-selftest-before.png) | ![HiPKI self-test after: all 9 steps show V, reader and card number populated, signature/decryption cert info shown](docs/images/hipki-selftest-after.png) |
+| ![HiPKI 自我檢測頁面（安裝前）：第 5 項「選擇讀卡機及卡片」顯示 X，讀卡機下拉選單是空的，第 6～9 項空白](docs/images/hipki-selftest-before.png) | ![HiPKI 自我檢測頁面（安裝後）：9 個項目全部顯示 V，讀卡機與卡號都有帶出，並顯示簽章／解密憑證資訊](docs/images/hipki-selftest-after.png) |
 
 ---
 
