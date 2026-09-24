@@ -1,5 +1,9 @@
 **繁體中文** | [English](README.en.md)
 
+<p align="center">
+  <img src="docs/images/ez100pu-reader-banner.jpg" alt="Castles EZ100PU 晶片讀卡機與包裝" width="640">
+</p>
+
 # EZ100PU 讀卡機在 Apple Silicon macOS 的驅動程式
 
 讓 **Castles EZ100PU** 晶片讀卡機在 Apple Silicon Mac（M1／M2／M3／M4）上正常運作 —— 包含透過 HiPKI 本機服務讀卡的台灣政府服務（報稅／健保／自然人憑證）。

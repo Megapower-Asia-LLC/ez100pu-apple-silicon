@@ -1,5 +1,9 @@
 [繁體中文](README.md) | **English**
 
+<p align="center">
+  <img src="docs/images/ez100pu-reader-banner.jpg" alt="Castles EZ100PU smart-card reader and packaging" width="640">
+</p>
+
 # EZ100PU on Apple Silicon macOS
 
 Make a **Castles EZ100PU** smart-card reader work on an Apple Silicon Mac (M1/M2/M3/M4) — including with Taiwan e-government services (報稅 / 健保 / 自然人憑證) that talk to the reader through the HiPKI local server.
